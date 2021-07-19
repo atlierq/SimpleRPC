@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class RPCRequest {
     private String interfaceName;
     private String methodName;
+    private String rpcServiceName;
 }
