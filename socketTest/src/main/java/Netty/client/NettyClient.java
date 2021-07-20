@@ -4,6 +4,7 @@ package Netty.client;
 import Netty.Message.RPCMessage;
 import Netty.Message.RPCRequest;
 import Netty.Message.RPCResponse;
+import Netty.Tools.Factory.SingletonFactory;
 import Netty.client.handler.NettyClientHandler;
 import Netty.codec.RpcMessageDecoder;
 import Netty.codec.RpcMessageEncoder;
@@ -23,7 +24,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.AttributeKey;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.C;
+import Netty.client.unProcessedRequests;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
@@ -33,6 +34,7 @@ import java.util.concurrent.CompletableFuture;
 public class NettyClient {
     private final Bootstrap bootstrap;
     private final NioEventLoopGroup eventLoopGroup;
+    private final unProcessedRequests unProcessedRequests;
     private ServiceDiscovery serviceDiscovery;
     public NettyClient(){
         eventLoopGroup = new NioEventLoopGroup();
@@ -57,6 +59,7 @@ public class NettyClient {
                 });
 
         serviceDiscovery = new ServiceDiscoveryImpl();
+        unProcessedRequests = SingletonFactory.getInstance(unProcessedRequests.class);
     }
 
 
@@ -81,7 +84,7 @@ public class NettyClient {
 
     }
     public Channel doConnect(InetSocketAddress inetSocketAddress) throws InterruptedException {
-        //这是链接部分
+        //这是连接部分获取channel
         CompletableFuture<Channel> completableFuture = new CompletableFuture<>();
         Channel channel = bootstrap.connect(inetSocketAddress).addListener(future -> {
             if (future.isSuccess()) {
@@ -95,10 +98,12 @@ public class NettyClient {
 
     }
     public Object sendRPCRequest(RPCRequest rpcRequest)  {
-
         InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest);
         Channel channel = getChannel(inetSocketAddress);
+        CompletableFuture<RPCResponse<Object>> resultFuture = new CompletableFuture<>();
+
         if(channel.isActive()){
+            unProcessedRequests.put(rpcRequest.getRequestID(),resultFuture);
             RPCMessage rpcMessage = RPCMessage.builder()
                     .data(rpcRequest)
                     .build();
@@ -107,38 +112,14 @@ public class NettyClient {
                     log.info("client send message[{}]",rpcMessage);
                 }else {
                     future.channel().close();
+                    resultFuture.completeExceptionally(future.cause());
                     log.error("send failed",future.cause());
                 }
             });
         }else {
             throw new IllegalStateException();
         }
-        try {
-//            getChannel();
-//            System.out.println("奇怪的地方"+channel);
-////            Thread.sleep(100);
-            getChannel(inetSocketAddress).writeAndFlush(rpcRequest).addListener(future->{
-                if(future.isSuccess()){
-                    log.info("client send message");
-                }else{
-                    log.info("send failed");
-                }
-            });
-            channel.closeFuture().sync();
-            AttributeKey<RPCResponse> key = AttributeKey.valueOf("rpcResponse");
-            return channel.attr(key).get();
-        } catch (InterruptedException e) {
-            log.error("occur exception when connect server",e);
-        }
-        return null;
+
+        return resultFuture;
     }
-
-
-
-
-
-
-
-
-
 }
