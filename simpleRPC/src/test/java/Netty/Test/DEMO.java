@@ -12,7 +12,7 @@ public class DEMO {
 
     @Test
     public void serverStart(){
-        new NettyServer(8080).run();
+        new NettyServer(8080).start();
     }
     @Test
     public void clientStart(){

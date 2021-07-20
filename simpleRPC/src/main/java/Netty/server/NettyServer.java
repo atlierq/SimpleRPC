@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 public class NettyServer {
     private final int port;
 
-    public void run(){
+    public void start(){
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         NioEventLoopGroup workGroup = new NioEventLoopGroup();
         KryoSerializer kryoSerializer = new KryoSerializer();
