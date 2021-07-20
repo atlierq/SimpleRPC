@@ -26,5 +26,6 @@ public class DEMO {
         NettyClient nettyClient = new NettyClient();
         RPCResponse request = (RPCResponse) nettyClient.sendRPCRequest(rpcRequest);
         log.info(String.valueOf(request));
+
     }
 }
