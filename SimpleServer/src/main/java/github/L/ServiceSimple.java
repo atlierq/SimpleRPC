@@ -10,7 +10,8 @@ public class ServiceSimple {
         NettyServer nettyServer = new NettyServer();
         RpcServiceConfig rpcServiceConfig = new RpcServiceConfig();
         rpcServiceConfig.setService(helloService);
-
+        nettyServer.registerService(rpcServiceConfig);
+        nettyServer.start();
 
     }
 }

@@ -1,8 +1,12 @@
 package Netty.server;
 
 import Netty.Message.RPCRequest;
+import Netty.Tools.Factory.SingletonFactory;
 import Netty.codec.RpcMessageDecoder;
 import Netty.codec.RpcMessageEncoder;
+import Netty.config.RpcServiceConfig;
+import Netty.provider.Imlp.ZkServiceProviderImpl;
+import Netty.provider.ServiceProvider;
 import Netty.serialize.kyro.KryoSerializer;
 import Netty.server.handler.NettyServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
@@ -18,10 +22,15 @@ import lombok.AllArgsConstructor;
 
 
 public class NettyServer {
-    private final int port = 8080;
+    public static final int port = 8080;
 
-
-
+    private final ServiceProvider serviceProvider;
+    public NettyServer(){
+        serviceProvider = SingletonFactory.getInstance(ZkServiceProviderImpl.class);
+    }
+    public void registerService(RpcServiceConfig rpcServiceConfig){
+        serviceProvider.publishService(rpcServiceConfig);
+    }
     public void start(){
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         NioEventLoopGroup workGroup = new NioEventLoopGroup();
