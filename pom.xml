@@ -10,6 +10,9 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>simpleRPC</module>
+        <module>Service-api</module>
+        <module>SimpleClient</module>
+        <module>SimpleServer</module>
     </modules>
 
     <properties>

@@ -1,15 +1,16 @@
-package Netty.Test;
-
 import Netty.client.NettyClient;
 import Netty.proxy.RpcClientProxy;
-import Netty.server.NettyServer;
+import Service1.Hello;
 import Service1.HelloService;
 
-public class RpcClient {
+public class ClientSimple {
     public static void main(String[] args) {
         NettyClient nettyClient = new NettyClient();
         RpcClientProxy rpcClientProxy = new RpcClientProxy(nettyClient);
-        rpcClientProxy.getProxy(HelloService.class);
-
+        HelloService helloService = rpcClientProxy.getProxy(HelloService.class);
+        String hello = helloService.hello(new Hello("111","222"));
+        System.out.println(hello);
     }
 }
+
+

@@ -16,9 +16,11 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
+
 public class NettyServer {
-    private final int port;
+    private final int port = 8080;
+
+
 
     public void start(){
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
