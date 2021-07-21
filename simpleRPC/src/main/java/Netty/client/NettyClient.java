@@ -30,7 +30,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
-@NoArgsConstructor
+
 public class NettyClient {
     private final Bootstrap bootstrap;
     private final NioEventLoopGroup eventLoopGroup;
