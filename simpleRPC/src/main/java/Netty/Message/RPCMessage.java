@@ -13,7 +13,7 @@ public class RPCMessage {
 
     private byte codec;
 
-    private int requestID;
+    private int requestID=1;
 
     private Object data;
 }

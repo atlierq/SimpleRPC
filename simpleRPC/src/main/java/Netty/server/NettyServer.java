@@ -1,5 +1,6 @@
 package Netty.server;
 
+import Netty.Message.RPCMessage;
 import Netty.Message.RPCRequest;
 import Netty.Tools.Factory.SingletonFactory;
 import Netty.codec.RpcMessageDecoder;
@@ -46,8 +47,8 @@ public class NettyServer {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
-                            ch.pipeline().addLast(new RpcMessageDecoder(kryoSerializer, RPCRequest.class));
                             ch.pipeline().addLast(new RpcMessageEncoder(kryoSerializer));
+                            ch.pipeline().addLast(new RpcMessageDecoder(kryoSerializer, RPCMessage.class));
                             ch.pipeline().addLast(new NettyServerHandler());
 
                         }

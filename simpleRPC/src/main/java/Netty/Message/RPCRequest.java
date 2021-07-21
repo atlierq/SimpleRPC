@@ -14,5 +14,7 @@ public class RPCRequest {
     private String methodName;
     private Object[] parameters;
     private Class<?>[] paramTypes;
-    private String rpcServiceName;
+    public String getRpcServiceName(){
+        return this.interfaceName;
+    }
 }

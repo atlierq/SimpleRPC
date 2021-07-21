@@ -41,7 +41,7 @@ public class NettyClient {
         bootstrap = new Bootstrap();
         NettyClientHandler nettyClientHandler = new NettyClientHandler();
         KryoSerializer kryoSerializer = new KryoSerializer();
-        RpcMessageDecoder rpcMessageDecoder = new RpcMessageDecoder(kryoSerializer,RPCResponse.class);
+        RpcMessageDecoder rpcMessageDecoder = new RpcMessageDecoder(kryoSerializer,RPCMessage.class);
         RpcMessageEncoder rpcMessageEncoder = new RpcMessageEncoder(kryoSerializer);
         bootstrap.group(eventLoopGroup)
                 .channel(NioSocketChannel.class)
@@ -98,6 +98,7 @@ public class NettyClient {
 
     }
     public Object sendRPCRequest(RPCRequest rpcRequest)  {
+        System.out.println(rpcRequest);
         InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest);
         Channel channel = getChannel(inetSocketAddress);
         CompletableFuture<RPCResponse<Object>> resultFuture = new CompletableFuture<>();

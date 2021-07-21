@@ -9,6 +9,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @Slf4j
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     private final RpcRequestHandler rpcRequestHandler;
@@ -18,10 +20,12 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         try {
+            System.out.println(msg.getClass());
             if(msg instanceof RPCMessage){
                 log.info("server receive msg:[{}]",msg);
                 RPCMessage rpcMessage = new RPCMessage();
-                RPCRequest rpcRequest = (RPCRequest) ((RPCMessage) msg).getData();
+
+                RPCRequest rpcRequest = (RPCRequest) (((RPCMessage) msg).getData());
                 Object result = rpcRequestHandler.handle(rpcRequest);
                 RPCResponse rpcResponse = new RPCResponse(rpcRequest.getRequestID(),1,"success",result);
                 rpcMessage.setData(rpcResponse);
